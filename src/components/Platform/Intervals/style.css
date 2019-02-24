@@ -1,0 +1,7 @@
+.interval {
+    margin-right: 5px;
+}
+
+.interval-active {
+    box-shadow: 0 0 12px 5px rgba(0, 0, 0, 0.4);
+}

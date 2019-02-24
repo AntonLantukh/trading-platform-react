@@ -4,7 +4,7 @@ import './style.css'
 const Footer = () => {
   return (
     <footer className="main-footer container">
-      <div className="row justify-content-around">
+      <div className="row justify-content-between">
         <div>
           <p>&copy; Crypto React App</p>
         </div>

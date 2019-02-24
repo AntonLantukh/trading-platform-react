@@ -1,4 +1,11 @@
 .main-header {
-    width: 1136px;
-    margin: 20px auto;
+  margin: 20px auto;
+}
+
+.main-header-logo {
+  margin: 0
+}
+
+.nav-link {
+  padding: 0.5rem 4rem;
 }
