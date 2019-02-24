@@ -3,7 +3,7 @@ import {
   chartDataLoadedSuccess,
   chartDataLoadedFailure } from '../actions'
 
-const fetchChartData = ({ exchange, pair, interval }, dispatch) => {
+const fetchChartData = ({ exchange, pair, interval }) => (dispatch) => {
   dispatch(chartDataLoadedStart());
   fetch(`https://api.blockmarkets.io/v1/markets/${exchange}/${pair}/ohlcv?interval=${interval}`)
     .then((response) => {
