@@ -1,13 +1,32 @@
+import moment from 'moment';
+
 const initialState = {
   isFetching: true,
   isFailure: false,
   error: null,
-  interval: {
-    '1m': [],
-    '5m': [],
-    '1h': [],
-    '1d': [],
-  }
+  chartData: [],
+};
+
+const processChartData = (data) => {
+  const finalData = [];
+  const labels = ['price', 'open', 'high', 'low', 'close'];
+  const values =['time_start', 'open', 'high', 'low', 'close'];
+  finalData.push(labels);
+
+  Object.values(data).reverse().forEach((item) => {
+    let array = [];
+    values.forEach((value) => {
+      if (value === 'time_start') {
+        array.push(moment(item[value]).format('LT'));
+        return
+      }
+      array.push(item[value]);
+    });
+    finalData.push(array);
+    array = [];
+  });
+
+  return finalData;
 };
 
 const reducer = (state = initialState, { type, payload }) => {
@@ -16,16 +35,13 @@ const reducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         isFetching: true,
-        isFailure: true,
+        isFailure: false,
       };
 
     case('FETCH_CHART_SUCCESS') :
       return {
         ...state,
-        interval: {
-          ...state.interval,
-          [payload.interval]: payload.chartData,
-        },
+        chartData: processChartData(payload.chartData),
         isFetching: false,
       };
 
@@ -34,7 +50,7 @@ const reducer = (state = initialState, { type, payload }) => {
         ...state,
         isFetching: false,
         isFailure: true,
-        error: payload,
+        error: payload.message,
       };
 
     default :

@@ -1,62 +1,70 @@
 import React, {Component} from 'react';
 import {fetchChartData} from '../../api';
 import {connect} from 'react-redux';
-import Pairs from './Pairs';
-import Intervals from './Intervals';
+import Options from './Options';
 import MainChart from './MainChart';
+import './style.css';
 
 const mapDispatchToProps = {
   fetchChartData
 };
 
+const mapStateToProps = ({chartData, isFetching, isFailure, error}) => ({
+  chartData,
+  isFetching,
+  isFailure,
+  error,
+});
+
 class Platform extends Component {
   constructor() {
     super();
     this.state = {
-      exchange: 'STMP',
+      exchange: 'KRKN',
       pair: 'BTC/USD',
-      interval: 1,
+      interval: '1M',
     }
   }
 
   componentDidMount() {
+    this.generateChartDataRequest();
+  };
+
+  generateChartDataRequest = () => {
     const {exchange, pair, interval} = this.state;
-    const { fetchChartData } = this.props;
+    const {fetchChartData} = this.props;
     fetchChartData({exchange, pair, interval});
   };
 
-  onPairChangeHandler = (item) => {
-    this.setState(() => {
-      return {
-        pair: item,
-      }
-    })
-  };
-
-  onIntervalChangeHandler = (item) => {
-    this.setState(() => {
-      return {
-        interval: item,
-      }
-    })
+  onSelectedValueChangeHandler = (stateKey, item) => {
+    this.setState({
+        [stateKey]: item,
+      }, this.generateChartDataRequest,
+    );
   };
 
   render() {
-    const {pair, interval} = this.state;
+    const {pair, interval, exchange} = this.state;
+    const {chartData, isFetching, error, isFailure} = this.props;
+
     return (
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="container">
-            <div className="row align-items-center justify-content-center">
-              <Pairs pair={pair} onCurrencyChangeHandler={this.onPairChangeHandler}/>
-              <MainChart/>
-            </div>
-          </div>
-          <Intervals interval={interval} onFrameChangeHandler={this.onIntervalChangeHandler}/>
+      <div className={`platform ${isFetching ? 'loader' : ''}`}>
+        <Options
+          pair={pair}
+          interval={interval}
+          exchange={exchange}
+          onSelectedValueChangeHandler={this.onSelectedValueChangeHandler}
+        />
+        <div className="platform-chart">
+          <MainChart
+            chartData={chartData}
+            error={error}
+            isFailure={isFailure}
+          />
         </div>
       </div>
     )
   }
 }
 
-export default connect(null, mapDispatchToProps)(Platform);
+export default connect(mapStateToProps, mapDispatchToProps)(Platform);
